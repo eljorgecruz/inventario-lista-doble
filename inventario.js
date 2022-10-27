@@ -6,43 +6,57 @@ export default class Inventario{
 
 
     agregar(nuevo){
-        if(this.primero===null){
+        let temp;
+
+        if (this.primero == null){
             this.primero = nuevo;
-        }else{
-            let aux = this.primero;
-            while(aux.next != null){
-                aux = aux.next;
+        }else if(nuevo.getCodigo() < this.primero.getCodigo()) {
+            temp = this.primero;
+            nuevo.next = temp;
+            temp.previous = nuevo;
+            this.primero = nuevo;
+        }else {
+            temp = this.primero;
+            while (temp.next != null && temp.getCodigo() < nuevo.getCodigo()){
+                temp = temp.next;
             }
-            aux.next = nuevo;
+            if(nuevo.getCodigo() < temp.getCodigo()) {
+                nuevo.next = temp;
+                nuevo.previous = temp.previous;
+                temp.previous.next = nuevo;
+                temp.previous = nuevo;
+            } else if(nuevo.getCodigo() > temp.getCodigo()) {
+                nuevo.previous = temp;
+                temp.next = nuevo;
+            }
         }
-        this.size++
-    }
-
-    agregarInicio(nuevo){
-        primero = this.primero;
-
-        nuevo.next = primero; 
+        this.size++;
     }
 
     eliminar(numero){
-        let current = this.primero;
-        let previous = null;
+        let aux = null;
 
-        while(current != null){
-            if(current.numero === numero){
-                if(!previous){
-                    this.primero = current.next;
-                }else {
-                    previous.next = current.next;
+        if(!this.primero) {
+            return null;
+        }else {
+            let temp = this.primero;
+
+            while(temp.next != null) {
+                temp = temp.next;
+                if(this.primero.getCodigo() == numero) {
+                    aux = this.primero;
+                    this.primero = this.primero.next;
+                }else if (temp.getCodigo() == numero) {
+                    aux = temp;
+                    aux.previous.next = aux.next;
+                    aux.next = null;
+                    aux.previous = null;
+                    return aux;
                 }
-                this.size--;
-                return current.numero;
-            }
-            else{
-                previous=current;
-                current=current.next;
             }
         }
+
+        this.size--;
         return null;
     }
 
